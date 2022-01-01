@@ -1,0 +1,9 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath\\json-.jar"
+    ],
+    "java.project.sourcePaths": [
+        "."
+    ]
+}
