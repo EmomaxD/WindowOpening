@@ -1,12 +1,47 @@
+import java.io.IOException;
+import java.net.*;
+import java.util.*;
+
+  
+
 
 class WindowOpening{
+     static String api_URL = "http://api.weatherapi.com/v1/current.json?key=c5029df5d2c34a07b53154946220101&q=Sakarya&aqi=no";
+     static String weatherInfo = "";
+     static URL url;
+     static Scanner scanner;
+     static String humidity;
+     static String Temperature;
+     static String windSpeed;
+     static String airCondition;
+     static String feltTemperature;
+     
       
-    public static void main(String[] args) {
-System.out.println(feltTemperature(90,40));
+
+    public static void main(String[] args) throws IOException {
+
+        System.out.println(feltTemperature(90,40));
+        System.out.println(WeatherInfo());
+        weatherInfo=WeatherInfo().toString();       
     }
 
     //Functions
-    static double feltTemperature(int T,int H){
+    static List<String> WeatherInfo()throws IOException{
+        List<String> info =new ArrayList<>();
+        url=new URL(api_URL);
+        scanner = new Scanner(url.openStream());
+        while(scanner.hasNext()){
+            //System.out.println(scanner.nextLine());
+            
+
+            info.add(scanner.nextLine());
+            
+        }
+
+
+        return info;
+    }
+    static double feltTemperature(double T,double H){
         double c1 = -42;
         double   c2 =2.05;
         double  c3 = 10.14;
@@ -31,6 +66,6 @@ System.out.println(feltTemperature(90,40));
         
         return time;
     }
-    //test
+
   
 }
