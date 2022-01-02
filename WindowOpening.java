@@ -9,8 +9,8 @@ import org.jsoup.nodes.Document;
 class WindowOpening{
 
      static String api_URL = "http://api.weatherapi.com/v1/current.json?key=c5029df5d2c34a07b53154946220101&q=Sakarya&aqi=no";
-     static double humidity;
-     static double Temperature;
+     static float humidity;
+     static float Temperature;
      static String windSpeed;
      static String windDegree;
      static String airCondition;
@@ -30,8 +30,8 @@ class WindowOpening{
        
         //Set variables
         windDegree=WeatherInfo("current", "wind_degree","weatherData.json").toString();
-        Temperature=Double.parseDouble(WeatherInfo("current","temp_c","weatherData.json").toString()) ;
-        humidity=Double.parseDouble(WeatherInfo("current","humidity","weatherData.json").toString());
+        Temperature=Float.parseFloat(WeatherInfo("current","temp_c","weatherData.json").toString()) ;
+        humidity=Float.parseFloat(WeatherInfo("current","humidity","weatherData.json").toString());
         windSpeed=WeatherInfo("current", "wind_kph","weatherData.json").toString();
         airCondition=WeatherInfo("current","condition","weatherData.json").toString();
         airCondition=secondParse("text", airCondition);
@@ -103,17 +103,17 @@ class WindowOpening{
          e =obj.get(valueOf);        
         return e;
     }
-    static double feltTemperature(double T,double H){
-        double c1 = -42;
-        double   c2 =2.05;
-        double  c3 = 10.14;
-        double   c4 = -0.224;
-        double  c5 = -6.83/1000;
-        double c6 = -5.481/100;
-        double c7 =1.228/1000 ;
-        double c8 = 8.52/10000;
-        double  c9 = -1.99/1000000;
-        double feltTemperature=0;
+    static float feltTemperature(float T,float H){
+        float c1 = -42;
+        float   c2 =2.05f;
+        float  c3 = 10.14f;
+        float   c4 = -0.224f;
+        float  c5 = -6.83f/1000;
+        float c6 = -5.481f/100f;
+        float c7 =1.228f/1000f;
+        float c8 = 8.52f/10000f;
+        float  c9 = -1.99f/1000000f;
+        float feltTemperature=0;
 
         T*=9;
         T/=5;
