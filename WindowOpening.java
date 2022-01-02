@@ -4,6 +4,10 @@ import java.util.*;
 import org.json.*;
 import java.io.PrintWriter;
 import java.io.File;
+import java.io.FileWriter;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 
   
@@ -14,8 +18,8 @@ class WindowOpening{
      static String weatherData;
      static URL url;
      static Scanner scanner;
-     static String humidity;
-     static String Temperature;
+     static double humidity;
+     static double Temperature;
      static String windSpeed;
      static String airCondition;
      static String feltTemperature;
@@ -26,20 +30,38 @@ class WindowOpening{
 
       
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {  
+
+        //Main Function
+        WriteTXT(ParseHTMLBody()); 
+
+        //Set variables
+        Temperature=Double.parseDouble(WeatherInfo("current","temp_c").toString()) ;
+        humidity=Double.parseDouble(WeatherInfo("current","humidity").toString());
+        windSpeed=WeatherInfo("current", "wind_kph").toString();
+        //airCondition=WeatherInfo("current","condition").toString();
+        feltTemperature=WeatherInfo("current","feelslike_c").toString();
+
+        //-----------------------------------------------------------------------
+
         
-        //System.out.println(getFileData());
-        //WeatherInfo("location");
-        
-        System.out.println(getFileData());
-        //System.out.println(WeatherInfo(""));
-        
-        System.out.println(feltTemperature(90,40));
-        
-              
+
+
+        System.out.println(feltTemperature);                       
     }
 
     //Functions
+    static void WriteTXT(String e)throws IOException{
+        FileWriter f=new FileWriter("weatherData.json");
+        f.write(e);
+        f.close();
+    }
+    static String ParseHTMLBody()throws IOException{
+        Document html = Jsoup.connect(api_URL).ignoreContentType(true).get();      
+        String Body = html.body().text();    
+        System.out.println(Body);
+        return Body;
+    }
     static String getFileData()throws IOException{
         File myObj = new File("weatherData.json");
         myObj.delete();
@@ -53,9 +75,41 @@ class WindowOpening{
         myReader.close();
         return data;
     }
-    static String WeatherInfo(String e)throws IOException{
+    static Object WeatherInfo(String object,String valueOf)throws IOException{
+        File myObj = new File("weatherData.json");
+       Object e;
+      
+        Scanner myReader = new Scanner(myObj);
+
+        while (myReader.hasNextLine()) {
+          data = myReader.nextLine();
+        }
+
+
+        myReader.close();
         JSONObject obj = new JSONObject(data);
-         e =obj.getString("general");
+         e =obj.getJSONObject(object).get(valueOf);
+         
+         
+
+
+        return e;
+    }
+    //Override
+    static Object WeatherInfo(String valueOf)throws IOException{
+        File myObj = new File("weatherData.json");
+        Object e;
+      
+        Scanner myReader = new Scanner(myObj);
+
+        while (myReader.hasNextLine()) {
+          data = myReader.nextLine();
+        }
+
+
+        myReader.close();
+        JSONObject obj = new JSONObject(data);
+         e =obj.getString(valueOf);
          
          
 
@@ -78,7 +132,7 @@ class WindowOpening{
     }
     static void CreateJsonFile()throws IOException{
         // writing JSON to file:"JSONExample.json" in cwd
-        PrintWriter pw = new PrintWriter("weatherData.json");
+        PrintWriter pw = new PrintWriter("weatherDataAUTO.json");
         pw.write(wJ.toString());
 
         pw.flush();
@@ -96,6 +150,10 @@ class WindowOpening{
         double c8 = 8.52/10000;
         double  c9 = -1.99/1000000;
         double feltTemperature=0;
+
+        T*=9;
+        T/=5;
+        T+=32;
         feltTemperature=c1+c2*T+c3*H+c4*T*H+c5*T*T+c6*H*H+c7*T*T*H+c8*T*H*H+c9*T*T*H*H;
         
         feltTemperature-=32;
