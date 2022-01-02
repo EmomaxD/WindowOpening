@@ -1,143 +1,107 @@
 import java.io.IOException;
-import java.net.*;
-import java.util.*;
-import org.json.*;
-import java.io.PrintWriter;
+import java.util.Scanner;
 import java.io.File;
 import java.io.FileWriter;
-
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-
-  
-
-
 class WindowOpening{
+
      static String api_URL = "http://api.weatherapi.com/v1/current.json?key=c5029df5d2c34a07b53154946220101&q=Sakarya&aqi=no";
-     static String weatherData;
-     static URL url;
-     static Scanner scanner;
      static double humidity;
      static double Temperature;
      static String windSpeed;
+     static String windDegree;
      static String airCondition;
-     static String feltTemperature;
-     
-     static String data;
-     static JSONObject wJ = new JSONObject();
-
-
-      
+     static String feltTemperature;   
 
     public static void main(String[] args) throws IOException {  
 
+        //setCity("Sakarya");
+
         //Main Function
-        WriteTXT(ParseHTMLBody()); 
-
+        if(!CheckIfExists("weatherData.json")){
+            WriteJSONFile(ParseHTMLBody(api_URL)); 
+        }else{
+            System.out.println("File already exists!\nFile Updated!");
+            WriteJSONFile(ParseHTMLBody(api_URL));
+        }
+       
         //Set variables
-        Temperature=Double.parseDouble(WeatherInfo("current","temp_c").toString()) ;
-        humidity=Double.parseDouble(WeatherInfo("current","humidity").toString());
-        windSpeed=WeatherInfo("current", "wind_kph").toString();
-        //airCondition=WeatherInfo("current","condition").toString();
-        feltTemperature=WeatherInfo("current","feelslike_c").toString();
+        windDegree=WeatherInfo("current", "wind_degree","weatherData.json").toString();
+        Temperature=Double.parseDouble(WeatherInfo("current","temp_c","weatherData.json").toString()) ;
+        humidity=Double.parseDouble(WeatherInfo("current","humidity","weatherData.json").toString());
+        windSpeed=WeatherInfo("current", "wind_kph","weatherData.json").toString();
+        airCondition=WeatherInfo("current","condition","weatherData.json").toString();
+        airCondition=secondParse("text", airCondition);
+        feltTemperature=WeatherInfo("current","feelslike_c","weatherData.json").toString();
+    
+        //----------------------------------------------------------------------- 
+        System.out.println("Air Condition : "+airCondition);
+        System.out.println("Wind Degree : "+windDegree);
+        System.out.println("Felt Temperature : "+feltTemperature);  
 
-        //-----------------------------------------------------------------------
-
-        
-
-
-        System.out.println(feltTemperature);                       
     }
 
     //Functions
-    static void WriteTXT(String e)throws IOException{
+    static String secondParse(String e,String File){
+        String data;
+        JSONObject obj = new JSONObject(File);
+        data=obj.get(e).toString();
+        return data;
+    }
+    static void setCity(String e){
+        api_URL="http://api.weatherapi.com/v1/current.json?key=c5029df5d2c34a07b53154946220101&q="+e+"&aqi=no";
+        System.out.println("City changed as "+e+"");
+    }
+    static boolean CheckIfExists(String e){
+        File tempFile = new File(e);
+        boolean exists = tempFile.exists();
+        
+        return exists;
+    }
+    static void WriteJSONFile(String e)throws IOException{
         FileWriter f=new FileWriter("weatherData.json");
         f.write(e);
         f.close();
     }
-    static String ParseHTMLBody()throws IOException{
-        Document html = Jsoup.connect(api_URL).ignoreContentType(true).get();      
+    static String ParseHTMLBody(String link)throws IOException{
+        Document html = Jsoup.connect(link).ignoreContentType(true).get();      
         String Body = html.body().text();    
-        System.out.println(Body);
         return Body;
     }
-    static String getFileData()throws IOException{
-        File myObj = new File("weatherData.json");
-        myObj.delete();
-        PutDataToJSON(wJ);
-        CreateJsonFile();
+    static Object WeatherInfo(String object,String valueOf,String File)throws IOException{
+        File myObj = new File(File);
+        Object e;
+        String data="";
         Scanner myReader = new Scanner(myObj);
 
         while (myReader.hasNextLine()) {
           data = myReader.nextLine();
         }
-        myReader.close();
-        return data;
-    }
-    static Object WeatherInfo(String object,String valueOf)throws IOException{
-        File myObj = new File("weatherData.json");
-       Object e;
-      
-        Scanner myReader = new Scanner(myObj);
-
-        while (myReader.hasNextLine()) {
-          data = myReader.nextLine();
-        }
-
 
         myReader.close();
         JSONObject obj = new JSONObject(data);
          e =obj.getJSONObject(object).get(valueOf);
-         
-         
-
-
         return e;
     }
     //Override
-    static Object WeatherInfo(String valueOf)throws IOException{
-        File myObj = new File("weatherData.json");
+    static Object WeatherInfo(String valueOf,String File)throws IOException{
+        File myObj = new File(File);
         Object e;
-      
+        String data="";
         Scanner myReader = new Scanner(myObj);
 
         while (myReader.hasNextLine()) {
           data = myReader.nextLine();
         }
 
-
         myReader.close();
+
         JSONObject obj = new JSONObject(data);
-         e =obj.getString(valueOf);
-         
-         
-
-
+         e =obj.get(valueOf);        
         return e;
-    }
-    static void PutDataToJSON(JSONObject js)throws IOException{
-        
-        url=new URL(api_URL);
-        scanner = new Scanner(url.openStream());
-        while(scanner.hasNext()){
-            //System.out.println(scanner.nextLine());
-            
-           js.put("general", scanner.nextLine());
-        
-        }
-          
-
-       
-    }
-    static void CreateJsonFile()throws IOException{
-        // writing JSON to file:"JSONExample.json" in cwd
-        PrintWriter pw = new PrintWriter("weatherDataAUTO.json");
-        pw.write(wJ.toString());
-
-        pw.flush();
-        pw.close();
-
     }
     static double feltTemperature(double T,double H){
         double c1 = -42;
@@ -162,12 +126,10 @@ class WindowOpening{
         
         return feltTemperature;
     }
-     static int returnTime(int feltTemp){
+    static int returnTime(int feltTemp){
        int time=0;
 
         
         return time;
     }
-
-  
 }
