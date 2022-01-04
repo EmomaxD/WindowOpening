@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import java.lang.Math;
 
 class WindowOpening{
 
@@ -40,11 +41,18 @@ class WindowOpening{
         //----------------------------------------------------------------------- 
         System.out.println("Air Condition : "+airCondition);
         System.out.println("Wind Degree : "+windDegree);
-        System.out.println("Felt Temperature : "+feltTemperature);  
-
+        System.out.println("Wind Speed : "+windSpeed);
+        System.out.println("Felt Temperature : "+feltTemperature);
+        System.out.println("Zaman : "+returnTime(Float.parseFloat(feltTemperature)));
+        DeleteFile("weatherData.json");
+        
     }
-
+       
     //Functions
+    static void DeleteFile(String file){
+        File f = new File(file);
+        f.delete();
+    }
     static String secondParse(String e,String File){
         String data;
         JSONObject obj = new JSONObject(File);
@@ -126,8 +134,14 @@ class WindowOpening{
         
         return feltTemperature;
     }
-    static int returnTime(int feltTemp){
-       int time=0;
+    static float returnTime(float feltTemp){
+       float time=0;
+       
+       if(feltTemp<0&&feltTemp>-10){time=13-Math.abs(feltTemp);}
+       else if(feltTemp==0){time=2;}
+       else if(feltTemp>0&&feltTemp<10){time=4*feltTemp;}
+       else if(feltTemp>10&&feltTemp<20){time=14*feltTemp-100;}
+       else if(feltTemp>20&&feltTemp<25){time=feltTemp*feltTemp;}
 
         
         return time;
