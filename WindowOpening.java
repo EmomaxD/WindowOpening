@@ -43,7 +43,7 @@ class WindowOpening{
         System.out.println("Wind Degree : "+windDegree);
         System.out.println("Wind Speed : "+windSpeed);
         System.out.println("Felt Temperature : "+feltTemperature);
-        System.out.println("Zaman : "+returnTime(Float.parseFloat(feltTemperature)));
+        System.out.println("Time : "+returnTime(Float.parseFloat(feltTemperature)));
         DeleteFile("weatherData.json");
         
     }
