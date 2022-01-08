@@ -1,8 +1,8 @@
 {
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "resources\\jsoup-1.14.3.jar",
-        "resources\\Java-json-.jar"
+        "libraries\\Java-json-.jar",
+        "libraries\\jsoup-1.14.3.jar"
     ],
     "java.project.sourcePaths": [
         "."
